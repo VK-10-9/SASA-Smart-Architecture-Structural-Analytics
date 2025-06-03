@@ -114,7 +114,11 @@ export default function ForceCalculator() {
             <CardHeader className="border-b border-border p-0">
               <Tabs 
                 value={activeTab} 
-                onValueChange={(value: string) => setActiveTab(value as LoadType)}
+                onValueChange={(value: string) => {
+                  if (value === 'dead' || value === 'live' || value === 'wind' || value === 'seismic') {
+                    setActiveTab(value);
+                  }
+                }}
                 className="w-full"
               >
                 <TabsList className="grid w-full grid-cols-4 bg-muted/50 border-b border-border rounded-none">
