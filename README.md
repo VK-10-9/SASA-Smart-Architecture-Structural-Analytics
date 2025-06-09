@@ -1,3 +1,21 @@
+# Force Calculator Project
+
+## Project Information
+This project is developed as part of the academic requirements at K. L. E. INSTITUTE OF TECHNOLOGY.
+
+### Institution Details
+- **College**: K. L. E. SOCIETY'S K. L. E. INSTITUTE OF TECHNOLOGY
+- **Address**: Opp. Airport, Gokul, Hubballi-580 027
+- **Department**: Computer Science
+- **University**: Visvesvaraya Technological University
+
+### Team Members
+1. Vishwanath M. Koliwad
+2. Nihal V. Batunge
+
+### Project Guide
+- **Professor**: Mr. Rajat Vaidya
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
