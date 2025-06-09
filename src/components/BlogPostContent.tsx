@@ -12,8 +12,8 @@ interface BlogPostContentProps {
     category: string;
     readTime: string;
     image: string;
-    author?: string;
-    authorTitle?: string;
+    author: string;
+    authorTitle: string;
     content: string;
   };
 }

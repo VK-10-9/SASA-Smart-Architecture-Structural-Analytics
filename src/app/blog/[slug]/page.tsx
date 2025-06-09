@@ -19,22 +19,22 @@ export default async function BlogPost({ params }: { params: { slug: string } })
     notFound();
   }
 
-  // Serialize the post data to ensure it's safe to pass to client components
-  const serializedPost = {
+  // Create a plain object with only the necessary data
+  const postData = {
     title: post.title,
     date: post.date,
     category: post.category,
     readTime: post.readTime,
     image: post.image,
-    author: post.author,
-    authorTitle: post.authorTitle,
+    author: post.author || '',
+    authorTitle: post.authorTitle || '',
     content: post.content,
   };
 
   return (
     <div className="min-h-screen bg-black text-white">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <BlogPostContent post={serializedPost} />
+        <BlogPostContent post={postData} />
       </div>
     </div>
   );
