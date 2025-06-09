@@ -1,8 +1,9 @@
-'use server';
-
 import { getBlogPost, getBlogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import BlogPostContent from '@/components/BlogPostContent';
+
+export const dynamic = 'force-static';
+export const revalidate = 3600; // Revalidate every hour
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
