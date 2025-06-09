@@ -7,12 +7,18 @@ import { Features } from "@/components/blocks/features-2";
 import { About } from "@/components/blocks/about";
 import { HowItWorks } from "@/components/blocks/how-it-works";
 
+interface ActionButton {
+  name: string;
+  style: string;
+  href: string;
+}
+
 const fadeUpAnimation = {
   initial: { opacity: 0, y: 20 },
   animate: { opacity: 1, y: 0 },
 };
 
-const ACTIONS = [
+const ACTIONS: ActionButton[] = [
   { 
     name: "Design Scenario", 
     style: "bg-white text-neutral-950 hover:bg-white/90",
@@ -25,7 +31,7 @@ const ACTIONS = [
   },
 ];
 
-export default function Home() {
+export default function Home(): JSX.Element {
   return (
     <main className="min-h-screen bg-neutral-950">
       {/* Hero Section */}

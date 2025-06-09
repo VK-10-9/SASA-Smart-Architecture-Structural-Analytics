@@ -5,7 +5,7 @@ import Link from "next/link";
 
 export default function About() {
   return (
-    <main className="min-h-screen bg-neutral-950 py-16">
+    <main className="min-h-screen bg-neutral-950 pt-20 py-16">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

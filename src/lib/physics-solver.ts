@@ -1,27 +1,52 @@
-type SolutionStep = {
+interface SolutionStep {
   description: string;
   formula: string;
   calculation: string;
   result: string;
-};
+}
 
 type LoadType = 'dead' | 'live' | 'wind' | 'seismic';
 
-type LoadSolution = {
+interface LoadSolution {
   type: LoadType;
   steps: SolutionStep[];
   totalLoad: number;
   unit: string;
-};
+}
 
-type PhysicsSolution = {
+interface PhysicsSolution {
   steps: SolutionStep[];
   loadSolutions: LoadSolution[];
   finalAnswer: string;
-};
+}
+
+interface DeadLoadParams {
+  area: number;
+  thickness: number;
+  density: number;
+}
+
+interface LiveLoadParams {
+  area: number;
+  loadPerArea: number;
+}
+
+interface WindLoadParams {
+  velocity: number;
+  airDensity: number;
+  dragCoefficient: number;
+  area: number;
+}
+
+interface SeismicParams {
+  mass: number;
+  spectralAcceleration: number;
+  importanceFactor: number;
+  responseModificationFactor: number;
+}
 
 export class PhysicsSolver {
-  private calculateDeadLoad(params: any): LoadSolution {
+  private calculateDeadLoad(params: DeadLoadParams): LoadSolution {
     const { area, thickness, density } = params;
     const selfWeight = area * thickness * density;
     
@@ -42,7 +67,7 @@ export class PhysicsSolver {
     };
   }
 
-  private calculateLiveLoad(params: any): LoadSolution {
+  private calculateLiveLoad(params: LiveLoadParams): LoadSolution {
     const { area, loadPerArea } = params;
     const totalLoad = area * loadPerArea;
     
@@ -63,7 +88,7 @@ export class PhysicsSolver {
     };
   }
 
-  private calculateWindLoad(params: any): LoadSolution {
+  private calculateWindLoad(params: WindLoadParams): LoadSolution {
     const { velocity, airDensity, dragCoefficient, area } = params;
     const windPressure = 0.5 * airDensity * Math.pow(velocity, 2);
     const windForce = windPressure * dragCoefficient * area;
@@ -91,7 +116,7 @@ export class PhysicsSolver {
     };
   }
 
-  private calculateSeismicLoad(params: any): LoadSolution {
+  private calculateSeismicLoad(params: SeismicParams): LoadSolution {
     const { mass, spectralAcceleration, importanceFactor, responseModificationFactor } = params;
     const baseShear = (mass * spectralAcceleration * importanceFactor) / responseModificationFactor;
     
@@ -113,42 +138,50 @@ export class PhysicsSolver {
   }
 
   async solve(problem: string): Promise<PhysicsSolution> {
+    if (!problem?.trim()) {
+      throw new Error('Problem description is required');
+    }
+
     const allSteps: SolutionStep[] = [];
     const loadSolutions: LoadSolution[] = [];
 
     try {
-      // Example: Parse problem to detect load types
+      // Parse problem to detect load types
       const loadType = this.detectLoadType(problem);
       
       // Calculate loads based on problem type
       switch (loadType) {
-        case 'dead':
+        case 'dead': {
           const deadLoadParams = this.parseDeadLoadParams(problem);
           const deadLoad = this.calculateDeadLoad(deadLoadParams);
           loadSolutions.push(deadLoad);
           allSteps.push(...deadLoad.steps);
           break;
+        }
           
-        case 'live':
+        case 'live': {
           const liveLoadParams = this.parseLiveLoadParams(problem);
           const liveLoad = this.calculateLiveLoad(liveLoadParams);
           loadSolutions.push(liveLoad);
           allSteps.push(...liveLoad.steps);
           break;
+        }
           
-        case 'wind':
+        case 'wind': {
           const windLoadParams = this.parseWindLoadParams(problem);
           const windLoad = this.calculateWindLoad(windLoadParams);
           loadSolutions.push(windLoad);
           allSteps.push(...windLoad.steps);
           break;
+        }
           
-        case 'seismic':
+        case 'seismic': {
           const seismicParams = this.parseSeismicParams(problem);
           const seismicLoad = this.calculateSeismicLoad(seismicParams);
           loadSolutions.push(seismicLoad);
           allSteps.push(...seismicLoad.steps);
           break;
+        }
           
         default:
           // Fall back to basic force calculation
@@ -180,7 +213,7 @@ export class PhysicsSolver {
     return null;
   }
 
-  private parseDeadLoadParams(problem: string): any {
+  private parseDeadLoadParams(problem: string): DeadLoadParams {
     // Extract parameters for dead load calculation
     // This is a simplified parser - in a real app, you'd want more robust parsing
     const areaMatch = problem.match(/(\d+(\.\d+)?)\s*m²/);
@@ -198,7 +231,7 @@ export class PhysicsSolver {
     };
   }
 
-  private parseLiveLoadParams(problem: string): any {
+  private parseLiveLoadParams(problem: string): LiveLoadParams {
     // Extract parameters for live load calculation
     const areaMatch = problem.match(/(\d+(\.\d+)?)\s*m²/);
     const loadMatch = problem.match(/(\d+(\.\d+)?)\s*(kN\/m²|N\/m²|psf)/);
@@ -216,7 +249,7 @@ export class PhysicsSolver {
     };
   }
 
-  private parseWindLoadParams(problem: string): any {
+  private parseWindLoadParams(problem: string): WindLoadParams {
     // Extract parameters for wind load calculation
     const velocityMatch = problem.match(/(\d+(\.\d+)?)\s*(m\/s|km\/h|mph)/);
     const areaMatch = problem.match(/(\d+(\.\d+)?)\s*m²/);
@@ -233,7 +266,7 @@ export class PhysicsSolver {
     };
   }
 
-  private parseSeismicParams(problem: string): any {
+  private parseSeismicParams(problem: string): SeismicParams {
     // Extract parameters for seismic load calculation
     const massMatch = problem.match(/(\d+(\.\d+)?)\s*(kg|tonne|ton)/);
     const saMatch = problem.match(/spectral acceleration[^\d]*(\d+(\.\d+)?)/i);

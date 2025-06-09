@@ -1,82 +1,134 @@
 import { NextResponse } from 'next/server';
+import Together from 'together-ai';
 
-export async function POST(request: Request) {
+const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
+
+interface DesignScenarioRequest {
+  scenario: string;
+  material: string;
+}
+
+interface SearchResult {
+  title: string;
+  snippet: string;
+  url: string;
+}
+
+interface APIResponse {
+  analysis?: string;
+  error?: string;
+  searchResults?: SearchResult[];
+}
+
+async function performWebSearch(query: string): Promise<SearchResult[]> {
   try {
-    const { scenario, material } = await request.json();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/web-search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, maxResults: 3 }),
+    });
 
-    if (!scenario || !material) {
+    if (!response.ok) {
+      console.warn('Web search failed, continuing without search results');
+      return [];
+    }
+
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.warn('Web search error:', error);
+    return [];
+  }
+}
+
+export async function POST(request: Request): Promise<NextResponse<APIResponse>> {
+  try {
+    if (!request.body) {
       return NextResponse.json(
-        { error: 'Scenario and material are required' },
+        { error: 'Request body is required' },
         { status: 400 }
       );
     }
 
-    const prompt = `You are an expert structural engineer providing analysis through SASSA (Smart Architecture & Structural Analytics). 
+    const body: DesignScenarioRequest = await request.json();
+    
+    if (!body.scenario?.trim()) {
+      return NextResponse.json(
+        { error: 'Design scenario is required' },
+        { status: 400 }
+      );
+    }
 
-Scenario: ${scenario}
-Material: ${material}
+    if (!body.material?.trim()) {
+      return NextResponse.json(
+        { error: 'Material selection is required' },
+        { status: 400 }
+      );
+    }
 
-Provide a brief analysis with the following sections:
-1. Design Approach
-2. Material Properties
-3. Load Considerations
-4. Key Recommendations
-5. Applicable IS Codes
+    const apiKey = process.env.TOGETHER_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'API configuration error' },
+        { status: 500 }
+      );
+    }
 
-Keep your response concise and focused on practical advice.`;
+    // Perform web search for relevant information
+    const searchQuery = `${body.scenario} ${body.material} structural design engineering`;
+    const searchResults = await performWebSearch(searchQuery);
+    
+    // Build context from search results
+    let searchContext = '';
+    if (searchResults.length > 0) {
+      searchContext = '\n\nRelevant information from recent sources:\n';
+      searchResults.forEach((result, index) => {
+        searchContext += `${index + 1}. ${result.title}: ${result.snippet}\n`;
+      });
+      searchContext += '\nUse this information to provide accurate and up-to-date design recommendations.';
+    }
 
-    console.log('Making request to Together AI for design scenario...');
-
-    const response = await fetch('https://api.together.xyz/inference', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
-        'Content-Type': 'application/json',
+    const messages = [
+      {
+        role: 'system',
+        content: `You are a senior structural engineer and architectural consultant with expertise in design analysis. Provide comprehensive analysis and recommendations for structural design scenarios.${searchContext}`
       },
-      body: JSON.stringify({
-        model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        prompt: prompt,
-        max_tokens: 800,
-        temperature: 0.7,
-        top_p: 0.9,
-        top_k: 50,
-        repetition_penalty: 1,
-        stop: ["</s>", "Human:", "Assistant:"],
-      }),
+      {
+        role: 'user',
+        content: `Analyze this design scenario:\n\nScenario: ${body.scenario}\nMaterial: ${body.material}\n\nPlease provide:\n1. Structural analysis and considerations\n2. Material-specific recommendations\n3. Design challenges and solutions\n4. Code compliance considerations\n5. Cost and sustainability factors\n6. Alternative approaches if applicable`
+      }
+    ];
+
+    const response = await together.chat.completions.create({
+      messages,
+      model: 'lgai/exaone-3-5-32b-instruct',
+      stream: true
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      console.error('Together AI API Error:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData
-      });
-      throw new Error(`Together AI API Error: ${response.status} ${response.statusText}`);
+    let analysis = '';
+    for await (const token of response) {
+      analysis += token.choices[0]?.delta?.content || '';
     }
 
-    const data = await response.json();
-    console.log('Together AI Response:', data);
-    
-    if (!data.choices?.[0]?.text) {
-      throw new Error('Invalid response format from Together AI');
+    if (!analysis) {
+      return NextResponse.json(
+        { error: 'AI service returned an empty response' },
+        { status: 500 }
+      );
     }
 
-    const analysis = data.choices[0].text.trim();
-    const tokenUsage = {
-      prompt_tokens: data.usage?.prompt_tokens || 0,
-      completion_tokens: data.usage?.completion_tokens || 0,
-      total_tokens: data.usage?.total_tokens || 0
-    };
-
-    return NextResponse.json({ 
+    return NextResponse.json({
       analysis,
-      tokenUsage
+      searchResults: searchResults.length > 0 ? searchResults : undefined
     });
   } catch (error) {
-    console.error('Detailed error:', error);
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'An unexpected error occurred while analyzing the scenario';
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to analyze design scenario' },
+      { error: errorMessage },
       { status: 500 }
     );
   }

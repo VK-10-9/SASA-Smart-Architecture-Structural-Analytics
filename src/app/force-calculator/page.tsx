@@ -22,6 +22,12 @@ interface SolutionData {
   solution: Record<string, any>;
 }
 
+interface SearchResult {
+  title: string;
+  snippet: string;
+  url: string;
+}
+
 const SAMPLE_QUESTIONS = [
   "A 5kg object is pushed with a force of 20N. What is its acceleration?",
   "A car of mass 1200kg accelerates at 2.5 m/s². What is the net force acting on it?",
@@ -42,6 +48,7 @@ export default function ForceCalculator() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tokenUsage, setTokenUsage] = useState<{ prompt: number; completion: number; total: number } | null>(null);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
 
   const generateRandomQuestion = () => {
     const randomQuestion = SAMPLE_QUESTIONS[Math.floor(Math.random() * SAMPLE_QUESTIONS.length)];
@@ -49,6 +56,7 @@ export default function ForceCalculator() {
     setSolution('');
     setError(null);
     setTokenUsage(null);
+    setSearchResults([]);
   };
 
   const handleSolveProblem = async () => {
@@ -85,6 +93,7 @@ export default function ForceCalculator() {
       const data = await response.json();
       setSolution(data.explanation);
       setTokenUsage(data.tokenUsage);
+      setSearchResults(data.searchResults || []);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -94,7 +103,7 @@ export default function ForceCalculator() {
 
   return (
     <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-12 relative z-10">
+      <div className="container mx-auto px-4 pt-20 py-12 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -225,6 +234,35 @@ export default function ForceCalculator() {
                     <div className="prose prose-sm max-w-none">
                       <h3 className="font-medium mb-2">Solution</h3>
                       <div className="whitespace-pre-wrap">{solution}</div>
+                      
+                      {searchResults.length > 0 && (
+                        <div className="mt-6 p-4 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800">
+                          <h4 className="font-medium mb-3 text-blue-900 dark:text-blue-100">
+                            📚 Related Resources
+                          </h4>
+                          <div className="space-y-3">
+                            {searchResults.map((result, index) => (
+                              <div key={index} className="p-3 rounded-lg bg-white dark:bg-gray-800 border border-blue-100 dark:border-blue-900">
+                                <h5 className="font-medium text-sm text-blue-800 dark:text-blue-200 mb-1">
+                                  {result.title}
+                                </h5>
+                                <p className="text-sm text-gray-600 dark:text-gray-300 mb-2">
+                                  {result.snippet}
+                                </p>
+                                <a
+                                  href={result.url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center"
+                                >
+                                  Visit Resource →
+                                </a>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
                       {tokenUsage && (
                         <div className="mt-4 text-sm text-muted-foreground">
                           <p>Token Usage:</p>

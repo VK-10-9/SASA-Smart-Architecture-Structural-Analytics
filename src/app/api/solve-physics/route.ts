@@ -1,72 +1,124 @@
 import { NextResponse } from 'next/server';
+import Together from 'together-ai';
 
-export async function POST(request: Request) {
+const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
+
+interface PhysicsProblemRequest {
+  type: string;
+  parameters: {
+    problem: string;
+  };
+}
+
+interface SearchResult {
+  title: string;
+  snippet: string;
+  url: string;
+}
+
+interface APIResponse {
+  explanation?: string;
+  error?: string;
+  searchResults?: SearchResult[];
+}
+
+async function performWebSearch(query: string): Promise<SearchResult[]> {
   try {
-    const { type, parameters } = await request.json();
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/web-search`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query, maxResults: 3 }),
+    });
 
-    if (!parameters.problem) {
+    if (!response.ok) {
+      console.warn('Web search failed, continuing without search results');
+      return [];
+    }
+
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.warn('Web search error:', error);
+    return [];
+  }
+}
+
+export async function POST(request: Request): Promise<NextResponse<APIResponse>> {
+  try {
+    if (!request.body) {
       return NextResponse.json(
-        { error: 'Problem description is required' },
+        { error: 'Request body is required' },
         { status: 400 }
       );
     }
 
-    const prompt = `You are a physics tutor explaining force problems to students. Explain concepts clearly and concisely.
+    const body: PhysicsProblemRequest = await request.json();
+    if (!body.parameters?.problem?.trim()) {
+      return NextResponse.json(
+        { error: 'Problem description is required and cannot be empty' },
+        { status: 400 }
+      );
+    }
 
-Problem: ${parameters.problem}
+    const apiKey = process.env.TOGETHER_API_KEY;
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: 'API configuration error' },
+        { status: 500 }
+      );
+    }
 
-Please provide a detailed solution that includes:
-1. What forces are involved
-2. How these forces interact
-3. Step-by-step solution process
-4. Final answer with units
-5. Brief explanation of the physics principles involved
+    // Perform web search for relevant information
+    const searchResults = await performWebSearch(body.parameters.problem.trim());
+    
+    // Build context from search results
+    let searchContext = '';
+    if (searchResults.length > 0) {
+      searchContext = '\n\nRelevant information from recent sources:\n';
+      searchResults.forEach((result, index) => {
+        searchContext += `${index + 1}. ${result.title}: ${result.snippet}\n`;
+      });
+      searchContext += '\nUse this information to provide accurate and up-to-date explanations.';
+    }
 
-Keep the explanation clear and concise, suitable for a student learning physics.`;
-
-    console.log('Making request to Together AI...');
-
-    const response = await fetch('https://api.together.xyz/inference', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.TOGETHER_API_KEY}`,
-        'Content-Type': 'application/json',
+    const messages = [
+      { 
+        role: 'system', 
+        content: `You are a physics tutor explaining force problems to students. Explain concepts clearly and concisely.${searchContext}` 
       },
-      body: JSON.stringify({
-        model: "mistralai/Mixtral-8x7B-Instruct-v0.1",
-        prompt: prompt,
-        max_tokens: 1000,
-        temperature: 0.7,
-        top_p: 0.7,
-        top_k: 50,
-        repetition_penalty: 1,
-        stop: ["</s>", "Human:", "Assistant:"],
-      }),
+      { role: 'user', content: body.parameters.problem.trim() }
+    ];
+
+    const response = await together.chat.completions.create({
+      messages,
+      model: 'lgai/exaone-3-5-32b-instruct',
+      stream: true
     });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
-      console.error('Together AI API Error:', {
-        status: response.status,
-        statusText: response.statusText,
-        errorData
-      });
-      throw new Error(`Together AI API Error: ${response.status} ${response.statusText}`);
+    let explanation = '';
+    for await (const token of response) {
+      explanation += token.choices[0]?.delta?.content || '';
     }
 
-    const data = await response.json();
-    console.log('Together AI Response:', data);
-    
-    if (!data.choices?.[0]?.text) {
-      throw new Error('Invalid response format from Together AI');
+    if (!explanation) {
+      return NextResponse.json(
+        { error: 'AI service returned an empty response' },
+        { status: 500 }
+      );
     }
 
-    const explanation = data.choices[0].text.trim();
-    return NextResponse.json({ explanation });
+    return NextResponse.json({ 
+      explanation,
+      searchResults: searchResults.length > 0 ? searchResults : undefined
+    });
   } catch (error) {
-    console.error('Detailed error:', error);
+    const errorMessage = error instanceof Error 
+      ? error.message 
+      : 'An unexpected error occurred while processing your request';
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Failed to solve the problem' },
+      { error: errorMessage },
       { status: 500 }
     );
   }
