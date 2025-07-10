@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server';
 import Together from 'together-ai';
-import type { ChatCompletionSystemMessageParam, ChatCompletionUserMessageParam } from 'together-ai/resources/chat/completions';
 
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
 
@@ -91,14 +90,14 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
       searchContext += '\nUse this information to provide accurate and up-to-date design recommendations.';
     }
 
-    // Create messages with proper typing for Together AI
-    const systemMessage: ChatCompletionSystemMessageParam = {
-      role: 'system',
+    // Create properly typed messages for Together AI
+    const systemMessage = {
+      role: 'system' as const,
       content: `You are a senior structural engineer and architectural consultant with expertise in design analysis. Provide comprehensive analysis and recommendations for structural design scenarios.${searchContext}`
     };
 
-    const userMessage: ChatCompletionUserMessageParam = {
-      role: 'user',
+    const userMessage = {
+      role: 'user' as const,
       content: `Analyze this design scenario:\n\nScenario: ${body.scenario}\nMaterial: ${body.material}\n\nPlease provide:\n1. Structural analysis and considerations\n2. Material-specific recommendations\n3. Design challenges and solutions\n4. Code compliance considerations\n5. Cost and sustainability factors\n6. Alternative approaches if applicable`
     };
 

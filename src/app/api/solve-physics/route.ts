@@ -83,13 +83,18 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
       searchContext += '\nUse this information to provide accurate and up-to-date explanations.';
     }
 
-    const messages = [
-      { 
-        role: 'system', 
-        content: `You are a physics tutor explaining force problems to students. Explain concepts clearly and concisely.${searchContext}` 
-      },
-      { role: 'user', content: body.parameters.problem.trim() }
-    ];
+    // Create properly typed messages for Together AI
+    const systemMessage = {
+      role: 'system' as const,
+      content: `You are a physics tutor explaining force problems to students. Explain concepts clearly and concisely.${searchContext}`
+    };
+
+    const userMessage = {
+      role: 'user' as const,
+      content: body.parameters.problem.trim()
+    };
+
+    const messages = [systemMessage, userMessage];
 
     const response = await together.chat.completions.create({
       messages,
