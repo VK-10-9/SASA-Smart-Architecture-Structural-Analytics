@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Footer } from "@/components/ui/large-name-footer";
 import NavBarDemo from "@/components/NavBarDemo";
@@ -29,10 +30,11 @@ interface RootLayoutProps {
 export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
   return (
     <html lang="en">
-      <body className={`${inter.className} antialiased bg-black min-h-screen`}>
+      <body className={inter.className}>
         <NavBarDemo />
-        <main>{children}</main>
+        {children}
         <Footer />
+        <Analytics />
       </body>
     </html>
   );
