@@ -14,7 +14,7 @@ export default function Documentation() {
   const [activeSection, setActiveSection] = useState("getting-started"); // Default active section
   const [sectionFeedback, setSectionFeedback] = useState<{[key: string]: 'yes' | 'no' | null}>({});
 
-  const sectionRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
   const sections = [
     {
@@ -157,7 +157,9 @@ export default function Documentation() {
                   .map((section, index) => (
                     <Link key={section.title} href={section.url} className="block">
                       <motion.div
-                        ref={(el) => (sectionRefs.current[index] = el)} // Assign ref to each section
+                        ref={(el) => {
+                          sectionRefs.current[index] = el;
+                        }}
                         id={section.url.split("#")[1]} // Add ID for direct linking
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
