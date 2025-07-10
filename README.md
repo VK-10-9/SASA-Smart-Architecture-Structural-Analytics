@@ -1,55 +1,102 @@
-# Force Calculator Project
+# 🚀 SASA – Smart Architecture & Structural Analytics
 
-## Project Information
-This project is developed as part of the academic requirements at K. L. E. INSTITUTE OF TECHNOLOGY.
+**SASA** is a fullstack, AI-powered web platform developed by first-year Computer Science students at **K.L.E. Institute of Technology**, aimed at simplifying structural design and analysis through intelligent load calculators, material modeling, and real-time recommendations.
 
-### Institution Details
-- **College**: K. L. E. SOCIETY'S K. L. E. INSTITUTE OF TECHNOLOGY
-- **Address**: Opp. Airport, Gokul, Hubballi-580 027
-- **Department**: Computer Science
-- **University**: Visvesvaraya Technological University
+---
 
-### Team Members
-1. Vishwanath M. Koliwad
-2. Nihal V. Batunge
+## 📘 Project Overview
 
-### Project Guide
-- **Professor**: Mr. Rajat Vaidya
+This project was developed as part of the academic curriculum at **K.L.E. Society’s K.L.E. Institute of Technology**, affiliated with **Visvesvaraya Technological University (VTU)**, with guidance from the Civil Engineering department.
 
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+> The platform leverages modern web technologies to allow users (students, professionals, and researchers) to perform **dead, live, wind, and seismic load** calculations and receive **AI-based structural recommendations** with PDF export functionality.
 
-## Getting Started
+---
 
-First, run the development server:
+## 🏫 Institution Details
+
+* **College**: K.L.E. Institute of Technology, Hubballi
+* **Department**: Computer Science & Engineering
+* **University**: Visvesvaraya Technological University (VTU)
+* **Project Guide**: Mr. Rajat Vaidya
+* **Team Members**:
+
+  * Vishwanath M. Koliwad 
+  * Nihal V. Batunge 
+
+---
+
+## 💻 Tech Stack
+
+* **Frontend**: Next.js 14, Tailwind CSS, Shadcn UI, Radix UI
+* **Backend**: Flask (Python)
+* **AI Model**: Together AI’s Mixtral-8x7B
+* **Hosting**: [Vercel](https://vercel.com)
+* **Design**: Blueprint UI with engineering-style dark mode
+
+---
+
+## 🧠 Core Features (v1.0)
+
+* 🌐 Web-based interface (no installation required)
+* 🧮 Dead, Live, Wind, and Seismic Load Calculators
+* 🤖 AI-Powered Structural Solver
+* 📄 Exportable PDF Reports
+* 🎯 Material Selector & Scenario Planner
+* 💡 Responsive UI for educational and professional usage
+
+---
+
+## 🔧 Getting Started (Development Mode)
+
+To run the development server locally:
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Visit [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📈 Features in Development (v1.1 & Beyond)
 
-## Learn More
+* 🔐 Login system to save multiple scenarios
+* 📊 Shear Force & Bending Moment Diagrams
+* 🎨 Interactive Load Visualizer
+* ✅ IS Code compliance checker
+* 📦 CAD/BIM Export (DWG, IFC)
+* 📱 PWA Support (Mobile-friendly usage)
+* 🧑‍🏫 Faculty Panel & Scenario Templates
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🌍 Live Project
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+> Explore the live platform here: [https://sassa-civil.vercel.app](https://sassa-civil.vercel.app)
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 📚 Learn More About the Stack
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# final
+* [Next.js Documentation](https://nextjs.org/docs)
+* [Vercel Platform](https://vercel.com/)
+* [Together AI](https://www.together.ai/)
+* [Tailwind CSS](https://tailwindcss.com/)
+* [Shadcn UI](https://ui.shadcn.com/)
+
+---
+
+## 🤝 Acknowledgements
+
+Special thanks to our guide **Mr. Rajat Vaidya** for his support and mentorship.
+
+**Developed with passion by:**
+
+* **Vishwanath M. Koliwad**
+* **Nihal V. Batunge**
+
+🧠 *Team SASA – Smart Architecture & Structural Analytics*
+*"Blending Computer Science with Structural Engineering for a smarter future!"*
+
+
