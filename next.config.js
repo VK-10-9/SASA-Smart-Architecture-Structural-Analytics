@@ -3,6 +3,20 @@ const path = require('path');
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Disable tracing to prevent permission issues
+  experimental: {
+    outputFileTracingExcludes: {
+      '*': []
+    },
+    esmExternals: 'loose',
+    serverComponentsExternalPackages: ['@radix-ui/react-tabs', '@radix-ui/react-label', '@radix-ui/react-slot'],
+  },
+  // Enable webpack build worker
+  experimental: {
+    webpackBuildWorker: true
+  },
+  // Disable static HTML generation for all pages
+  output: 'standalone',
   webpack: (config, { isServer }) => {
     // Add path aliases
     config.resolve.alias = {

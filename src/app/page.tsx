@@ -6,6 +6,7 @@ import { BeamsBackground } from "@/components/ui/beams-background";
 import { Features } from "@/components/blocks/features-2";
 import { About } from "@/components/blocks/about";
 import { HowItWorks } from "@/components/blocks/how-it-works";
+import { ProjectInfo } from "@/components/blocks/project-info";
 
 interface ActionButton {
   name: string;
@@ -43,7 +44,7 @@ export default function Home(): JSX.Element {
               {...fadeUpAnimation}
               transition={{ duration: 0.8 }}
             >
-              SASSA
+              SASA
             </motion.h1>
             <motion.p
               className="text-lg md:text-2xl lg:text-3xl text-white/70 tracking-tighter"
@@ -76,9 +77,9 @@ export default function Home(): JSX.Element {
 
       {/* How It Works Section */}
       <HowItWorks />
-
-      {/* About Section */}
-      <About />
+      
+      {/* Project Info Section */}
+      <ProjectInfo />
     </main>
   );
 }

@@ -15,10 +15,10 @@ export function About() {
           className="max-w-4xl mx-auto text-center mb-16"
         >
           <h2 className="text-4xl md:text-5xl font-bold mb-6 text-white bg-clip-text text-transparent bg-gradient-to-r from-white to-white/70">
-            About SASSA
+            About SASA
           </h2>
           <p className="text-lg md:text-xl text-white/70 leading-relaxed">
-            Smart Architecture & Structural Analytics (SASSA) is an innovative web application
+            Smart Architecture & Structural Analytics (SASA) is an innovative web application
             designed to revolutionize structural engineering analysis and design. Our platform
             combines cutting-edge technology with engineering expertise to provide powerful
             tools for structural analysis and design optimization.
@@ -48,6 +48,10 @@ export function About() {
               <li className="flex items-center gap-3">
                 <span className="w-2 h-2 bg-white/50 rounded-full"></span>
                 Nihal V. Batunge
+              </li>
+              <li className="flex items-center gap-3">
+                <span className="w-2 h-2 bg-white/50 rounded-full"></span>
+                Viraj S. Vighneshi
               </li>
             </ul>
           </motion.div>

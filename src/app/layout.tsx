@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import { Footer } from "@/components/ui/large-name-footer";
 import NavBarDemo from "@/components/NavBarDemo";
@@ -17,10 +16,10 @@ export const viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "SASSA - Smart Architecture & Structural Analytics",
+  title: "SASA - Smart Architecture & Structural Analytics",
   description: "Smart tools for structural analysis and architectural design",
   keywords: ["structural analysis", "architecture", "engineering", "calculators"],
-  authors: [{ name: "SASSA Team" }],
+  authors: [{ name: "SASA Team" }],
 };
 
 interface RootLayoutProps {
@@ -34,7 +33,6 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
         <NavBarDemo />
         {children}
         <Footer />
-        <Analytics />
       </body>
     </html>
   );

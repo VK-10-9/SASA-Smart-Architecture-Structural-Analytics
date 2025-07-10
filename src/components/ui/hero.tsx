@@ -11,7 +11,7 @@ export function Hero() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
       >
-        SASSA
+        SASA
       </motion.h1>
       <motion.p
         className="text-lg md:text-2xl lg:text-3xl text-white/70 tracking-tighter"
