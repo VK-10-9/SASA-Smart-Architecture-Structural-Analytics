@@ -92,14 +92,14 @@ export async function POST(request: Request): Promise<NextResponse<APIResponse>>
 
     const messages = [
       {
-        role: 'system',
+        role: 'system' as const,
         content: `You are a senior structural engineer and architectural consultant with expertise in design analysis. Provide comprehensive analysis and recommendations for structural design scenarios.${searchContext}`
       },
       {
-        role: 'user',
+        role: 'user' as const,
         content: `Analyze this design scenario:\n\nScenario: ${body.scenario}\nMaterial: ${body.material}\n\nPlease provide:\n1. Structural analysis and considerations\n2. Material-specific recommendations\n3. Design challenges and solutions\n4. Code compliance considerations\n5. Cost and sustainability factors\n6. Alternative approaches if applicable`
       }
-    ];
+    ] as const;
 
     const response = await together.chat.completions.create({
       messages,
