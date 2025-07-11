@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Footer } from "@/components/ui/large-name-footer";
 import NavBarDemo from "@/components/NavBarDemo";
+import { Analytics } from "@vercel/analytics/react"; // Import Vercel Analytics
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +34,8 @@ export default function RootLayout({ children }: RootLayoutProps): JSX.Element {
         <NavBarDemo />
         {children}
         <Footer />
+        {/* Vercel Analytics: Tracks page views and performance. Safe to include in all environments. */}
+        <Analytics />
       </body>
     </html>
   );

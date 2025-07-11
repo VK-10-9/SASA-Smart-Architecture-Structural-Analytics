@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { Analytics } from "@vercel/analytics/react"; // Import Vercel Analytics
 
 const teamMembers = [
   {
@@ -162,6 +163,8 @@ export default function About() {
           </div>
         </motion.div>
       </div>
+      {/* Vercel Analytics: Tracks page views and performance. Safe to include in all environments. */}
+      <Analytics />
     </main>
   );
 } 
