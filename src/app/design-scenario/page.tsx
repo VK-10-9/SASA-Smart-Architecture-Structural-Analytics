@@ -365,7 +365,7 @@ export default function DesignScenario() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="mt-8 text-center text-muted-foreground text-sm"
           >
-            <p>Need help with complex design scenarios? <a href="#" className="text-primary hover:underline">Contact our engineering team</a></p>
+            <p>Need help with complex design scenarios? <a href="mailto:info@sasa.engineer" className="text-primary underline">Contact our engineering team at info@sasa.engineer</a></p>
           </motion.div>
         </motion.div>
       </div>
