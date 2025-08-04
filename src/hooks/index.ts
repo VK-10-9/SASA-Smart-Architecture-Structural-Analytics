@@ -67,7 +67,7 @@ export const useFormValidation = <T extends Record<string, any>>(
 ) => {
   const [values, setValues] = useState<T>(initialValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
+  const [touched, setTouchedState] = useState<Record<string, boolean>>({});
 
   const validateField = useCallback((name: keyof T, value: any) => {
     const tempValues = { ...values, [name]: value };
@@ -95,7 +95,7 @@ export const useFormValidation = <T extends Record<string, any>>(
   }, [touched, validateField]);
 
   const setTouched = useCallback((name: keyof T) => {
-    setTouched(prev => ({ ...prev, [name]: true }));
+    setTouchedState(prev => ({ ...prev, [name]: true }));
     validateField(name, values[name]);
   }, [values, validateField]);
 
@@ -111,7 +111,7 @@ export const useFormValidation = <T extends Record<string, any>>(
     });
 
     setErrors(errorMap);
-    setTouched(
+    setTouchedState(
       Object.keys(values).reduce((acc, key) => ({ ...acc, [key]: true }), {})
     );
 
@@ -121,7 +121,7 @@ export const useFormValidation = <T extends Record<string, any>>(
   const reset = useCallback(() => {
     setValues(initialValues);
     setErrors({});
-    setTouched({});
+    setTouchedState({});
   }, [initialValues]);
 
   const isValid = Object.keys(errors).every(key => !errors[key]);
