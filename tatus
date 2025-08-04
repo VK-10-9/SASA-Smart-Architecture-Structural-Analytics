@@ -1,0 +1,156 @@
+[1mdiff --git a/src/components/ui/tubelight-navbar.tsx b/src/components/ui/tubelight-navbar.tsx[m
+[1mindex 012ff1f..a442ac0 100644[m
+[1m--- a/src/components/ui/tubelight-navbar.tsx[m
+[1m+++ b/src/components/ui/tubelight-navbar.tsx[m
+[36m@@ -1,8 +1,9 @@[m
+ "use client"[m
+ [m
+ import React, { useEffect, useState } from "react"[m
+[31m-import { motion } from "framer-motion"[m
+[32m+[m[32mimport { motion, AnimatePresence } from "framer-motion"[m
+ import Link from "next/link"[m
+[32m+[m[32mimport { usePathname } from "next/navigation"[m
+ import { LucideIcon } from "lucide-react"[m
+ import { cn } from "@/lib/utils"[m
+ [m
+[36m@@ -18,68 +19,123 @@[m [minterface NavBarProps {[m
+ }[m
+ [m
+ export function NavBar({ items, className }: NavBarProps) {[m
+[31m-  const [activeTab, setActiveTab] = useState(items[0].name)[m
+[32m+[m[32m  const pathname = usePathname()[m
+   const [isMobile, setIsMobile] = useState(false)[m
+[32m+[m[32m  const [isScrolled, setIsScrolled] = useState(false)[m
+ [m
+   useEffect(() => {[m
+     const handleResize = () => {[m
+       setIsMobile(window.innerWidth < 768)[m
+     }[m
+ [m
+[32m+[m[32m    const handleScroll = () => {[m
+[32m+[m[32m      setIsScrolled(window.scrollY > 20)[m
+[32m+[m[32m    }[m
+[32m+[m
+     handleResize()[m
+     window.addEventListener("resize", handleResize)[m
+[31m-    return () => window.removeEventListener("resize", handleResize)[m
+[32m+[m[32m    window.addEventListener("scroll", handleScroll)[m
+[32m+[m[32m    return () => {[m
+[32m+[m[32m      window.removeEventListener("resize", handleResize)[m
+[32m+[m[32m      window.removeEventListener("scroll", handleScroll)[m
+[32m+[m[32m    }[m
+   }, [])[m
+ [m
+   return ([m
+[31m-    <div[m
+[32m+[m[32m    <motion.div[m
+[32m+[m[32m      initial={{ y: -100, opacity: 0 }}[m
+[32m+[m[32m      animate={{ y: 0, opacity: 1 }}[m
+[32m+[m[32m      transition={{ duration: 0.5, ease: "easeOut" }}[m
+       className={cn([m
+[31m-        "fixed bottom-0 sm:top-0 left-1/2 -translate-x-1/2 z-50 mb-6 sm:pt-6",[m
+[31m-        className,[m
+[32m+[m[32m        "fixed top-0 w-full flex justify-center z-50 pt-4 transition-all duration-300",[m
+[32m+[m[32m        isScrolled && "pt-2",[m
+[32m+[m[32m        className[m
+       )}[m
+     >[m
+[31m-      <div className="flex items-center gap-3 bg-background/5 border border-border backdrop-blur-lg py-1 px-1 rounded-full shadow-lg">[m
+[32m+[m[32m      <div className={cn([m
+[32m+[m[32m        "flex items-center justify-center gap-2 sm:gap-4 md:gap-6 bg-black/30 backdrop-blur-xl border border-white/10 py-1.5 px-2 sm:px-3 rounded-full shadow-2xl transition-all duration-300",[m
+[32m+[m[32m        isScrolled && "sm:scale-95"[m
+[32m+[m[32m      )}>[m
+         {items.map((item) => {[m
+           const Icon = item.icon[m
+[31m-          const isActive = activeTab === item.name[m
+[32m+[m[32m          const isActive = pathname === item.url[m
+ [m
+           return ([m
+             <Link[m
+               key={item.name}[m
+               href={item.url}[m
+[31m-              onClick={() => setActiveTab(item.name)}[m
+[32m+[m[32m              scroll={false}[m
+               className={cn([m
+[31m-                "relative cursor-pointer text-sm font-semibold px-6 py-2 rounded-full transition-colors",[m
+[31m-                "text-foreground/80 hover:text-primary",[m
+[31m-                isActive && "bg-muted text-primary",[m
+[32m+[m[32m                "relative cursor-pointer text-sm font-medium px-2.5 sm:px-4 md:px-5 py-2 rounded-full transition-all duration-300",[m
+[32m+[m[32m                "text-white/70 hover:text-white hover:bg-white/5",[m
+[32m+[m[32m                isActive && "text-white"[m
+               )}[m
+             >[m
+               <span className="hidden md:inline">{item.name}</span>[m
+               <span className="md:hidden">[m
+                 <Icon size={18} strokeWidth={2.5} />[m
+               </span>[m
+[31m-              {isActive && ([m
+[31m-                <motion.div[m
+[31m-                  layoutId="lamp"[m
+[31m-                  className="absolute inset-0 w-full bg-primary/5 rounded-full -z-10"[m
+[31m-                  initial={false}[m
+[31m-                  transition={{[m
+[31m-                    type: "spring",[m
+[31m-                    stiffness: 300,[m
+[31m-                    damping: 30,[m
+[31m-                  }}[m
+[31m-                >[m
+[31m-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-primary rounded-t-full">[m
+[31m-                    <div className="absolute w-12 h-6 bg-primary/20 rounded-full blur-md -top-2 -left-2" />[m
+[31m-                    <div className="absolute w-8 h-6 bg-primary/20 rounded-full blur-md -top-1" />[m
+[31m-                    <div className="absolute w-4 h-4 bg-primary/20 rounded-full blur-sm top-0 left-2" />[m
+[31m-                  </div>[m
+[31m-                </motion.div>[m
+[31m-              )}[m
+[32m+[m[32m              <AnimatePresence>[m
+[32m+[m[32m                {isActive && ([m
+[32m+[m[32m                  <motion.div[m
+[32m+[m[32m                    layoutId="lamp"[m
+[32m+[m[32m                    className="absolute inset-0 w-full bg-white/10 rounded-full -z-10"[m
+[32m+[m[32m                    initial={{ opacity: 0 }}[m
+[32m+[m[32m                    animate={{ opacity: 1 }}[m
+[32m+[m[32m                    exit={{ opacity: 0 }}[m
+[32m+[m[32m                    transition={{[m
+[32m+[m[32m                      type: "spring",[m
+[32m+[m[32m                      stiffness: 300,[m
+[32m+[m[32m                      damping: 30,[m
+[32m+[m[32m                    }}[m
+[32m+[m[32m                  >[m
+[32m+[m[32m                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-1 bg-white rounded-t-full">[m
+[32m+[m[32m                      <motion.div[m
+[32m+[m[32m                        className="absolute w-12 h-6 bg-white/20 rounded-full blur-md -top-2 -left-2"[m
+[32m+[m[32m                        animate={{[m
+[32m+[m[32m                          scale: [1, 1.2, 1],[m
+[32m+[m[32m                          opacity: [0.5, 0.8, 0.5],[m
+[32m+[m[32m                        }}[m
+[32m+[m[32m                        transition={{[m
+[32m+[m[32m                          duration: 2,[m
+[32m+[m[32m                          repeat: Infinity,[m
+[32m+[m[32m                          ease: "easeInOut",[m
+[32m+[m[32m                        }}[m
+[32m+[m[32m                      />[m
+[32m+[m[32m                      <motion.div[m
+[32m+[m[32m                        className="absolute w-8 h-6 bg-white/20 rounded-full blur-md -top-1"[m
+[32m+[m[32m                        animate={{[m
+[32m+[m[32m                          scale: [1, 1.1, 1],[m
+[32m+[m[32m                          opacity: [0.5, 0.7, 0.5],[m
+[32m+[m[32m                        }}[m
+[32m+[m[32m                        transition={{[m
+[32m+[m[32m                          duration: 2,[m
+[32m+[m[32m                          repeat: Infinity,[m
+[32m+[m[32m                          ease: "easeInOut",[m
+[32m+[m[32m                          delay: 0.2,[m
+[32m+[m[32m                        }}[m
+[32m+[m[32m                      />[m
+[32m+[m[32m                      <motion.div[m
+[32m+[m[32m                        className="absolute w-4 h-4 bg-white/20 rounded-full blur-sm top-0 left-2"[m
+[32m+[m[32m                        animate={{[m
+[32m+[m[32m                          scale: [1, 1.3, 1],[m
+[32m+[m[32m                          opacity: [0.5, 0.9, 0.5],[m
+[32m+[m[32m                        }}[m
+[32m+[m[32m                        transition={{[m
+[32m+[m[32m                          duration: 2,[m
+[32m+[m[32m                          repeat: Infinity,[m
+[32m+[m[32m                          ease: "easeInOut",[m
+[32m+[m[32m                          delay: 0.4,[m
+[32m+[m[32m            
