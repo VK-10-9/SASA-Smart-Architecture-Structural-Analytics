@@ -48,6 +48,104 @@ This project was developed as part of the academic curriculum at **K.L.E. Societ
 
 ## 🔧 Getting Started (Development Mode)
 
+### Prerequisites
+- Node.js 18+ and npm
+- Git
+- Code editor (VS Code recommended)
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/VK-10-9/SASA-Smart-Architecture-Structural-Analytics.git
+   cd SASA-Smart-Architecture-Structural-Analytics
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up environment variables**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local with your API keys
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+### Development Commands
+- `npm run dev` - Start development server
+- `npm run build` - Create production build
+- `npm run start` - Start production server
+- `npm run lint` - Run ESLint
+- `npm run lint:fix` - Fix ESLint issues
+- `npm run type-check` - Run TypeScript type checking
+- `npm run format` - Format code with Prettier
+- `npm run pre-commit` - Run all checks before committing
+
+### Environment Variables
+```env
+TOGETHER_API_KEY=your_together_ai_api_key
+RESEND_API_KEY=your_resend_api_key
+NEXT_PUBLIC_BASE_URL=http://localhost:3000
+```
+
+### Code Quality
+- **TypeScript** for type safety
+- **ESLint** for code linting
+- **Prettier** for code formatting
+- **Comprehensive error handling**
+- **Input validation and sanitization**
+
+---
+
+## 🏗️ Architecture
+
+### Tech Stack
+- **Frontend**: Next.js 14, React 18, TypeScript
+- **Styling**: Tailwind CSS, Shadcn UI, Radix UI
+- **Backend**: Next.js API Routes
+- **AI Integration**: Together AI (Mixtral models)
+- **Email**: Resend API
+- **Analytics**: Vercel Analytics
+
+### Project Structure
+```
+src/
+├── app/                    # Next.js 13+ app directory
+│   ├── api/               # API routes
+│   ├── (pages)/           # Page components
+│   └── globals.css        # Global styles
+├── components/            # Reusable components
+│   ├── ui/               # Base UI components
+│   ├── blocks/           # Page sections
+│   └── load-calculator/  # Calculator components
+├── lib/                  # Utility libraries
+│   ├── api-client.ts     # API client
+│   ├── error-handler.ts  # Error handling
+│   ├── validation.ts     # Input validation
+│   └── config.ts         # Configuration
+├── types/                # TypeScript types
+├── hooks/                # Custom React hooks
+└── data/                 # Static data
+```
+
+### Key Features
+- **Type-safe API calls** with comprehensive error handling
+- **Input validation** and sanitization
+- **Responsive design** with accessibility features
+- **Performance optimized** with code splitting
+- **SEO friendly** with proper meta tags
+
+---
+
 To run the development server locally:
 
 ```bash
